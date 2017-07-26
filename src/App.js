@@ -9,6 +9,10 @@ const BlockStyled = style.div`
     border: 1px solid black;
     display: inline-block;
     white-space: nowrap;
+    
+    &:hover {
+        cursor: ${({ clicked }) => clicked ? 'not-allowed' : 'pointer' };
+    }
 `;
 
 class Block extends Component {
@@ -22,7 +26,11 @@ class Block extends Component {
     }
 
     render () {
-        return <BlockStyled onClick={(e) => this.handleClick(e)} onContextMenu={(e) => this.handleContextMenu(e)}>
+        return <BlockStyled
+            onClick={(e) => this.handleClick(e)}
+            onContextMenu={(e) => this.handleContextMenu(e)}
+            {...this.state}
+        >
             {this.state.clicked ? 'C' : ''}
             {this.state.flagged ? 'F' : ''}
         </BlockStyled>
@@ -78,7 +86,7 @@ const Board = ({ rows = 5, columns = 5 }) => {
 class App extends Component {
   render() {
     return (
-        <Board/>
+        <Board />
     );
   }
 }
