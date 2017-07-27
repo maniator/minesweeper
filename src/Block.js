@@ -42,6 +42,7 @@ export class Block extends Component {
         return <BlockStyled
             onClick={(e) => this.handleClick(e)}
             onContextMenu={(e) => this.handleContextMenu(e)}
+            onDoubleClick={(e) => this.handleDoubleClick(e)}
             clicked={this.state.clicked}
             flagged={this.state.flagged}
             containsBomb={this.state.containsBomb}
@@ -53,6 +54,7 @@ export class Block extends Component {
 
     handleContextMenu (e) {
         e.preventDefault();
+        
         if (!this.state.clicked) {
             this.setState({
                 flagged: !this.state.flagged,
@@ -62,9 +64,24 @@ export class Block extends Component {
                 currentBox: this.props,
                 flagged: this.state.flagged,
                 clicked: false,
+                doubleClicked: false,
             }));
         }
-
+    }
+    
+    handleDoubleClick (e) {
+        e.preventDefault();
+        
+        if (this.state.clicked && !this.state.flagged) {
+            this.props.onBoxClick({
+                row: this.props.rowIndex,
+                column: this.props.index,
+                currentBox: this.props,
+                flagged: this.state.flagged,
+                clicked: this.state.clicked,
+                doubleClicked: true,
+            });
+        }
     }
 
     handleClick (e) {
@@ -77,6 +94,7 @@ export class Block extends Component {
                 currentBox: this.props,
                 flagged: this.state.flagged,
                 clicked: this.state.clicked,
+                doubleClicked: false,
             }));
         }
     }

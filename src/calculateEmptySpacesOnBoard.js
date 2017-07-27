@@ -1,7 +1,7 @@
-export const calculateEmptySpacesOnBoard = ({ board, row, column }, checkedPoints = {}) => {
+export const calculateEmptySpacesOnBoard = ({ board, row, column }, checkedPoints = {}, passThrough = false) => {
     // make a copy
     let boardCopy = JSON.parse(JSON.stringify(board));
-
+    
     if (row < 0 || column < 0) {
         return boardCopy;
     }
@@ -18,7 +18,7 @@ export const calculateEmptySpacesOnBoard = ({ board, row, column }, checkedPoint
         return boardCopy;
     }
 
-    const key = `${row}${column}`;
+    const key = `${row}|${column}`;
 
     if (checkedPoints[key]) {
         return boardCopy;
@@ -27,7 +27,7 @@ export const calculateEmptySpacesOnBoard = ({ board, row, column }, checkedPoint
     point.clicked = true;
     checkedPoints[key] = true;
 
-    if (point.value === 0) {
+    if ((point.value === 0 && !point.containsBomb) || passThrough) {
         // once this point has been checked and is empty, check on top, bottom, left, and right of it.
         boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row + 1, column: column }, checkedPoints);
         boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row - 1, column: column }, checkedPoints);

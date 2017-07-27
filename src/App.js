@@ -75,8 +75,13 @@ class Board extends Component {
             board: this.generateNewBoard(),
         }, callback);
     }
+    
+    showBombAlert () {
+        // @todo reset timer/disable board, etc
+        alert('YOU LOSE!\n\n\n YOU CLICKED ON A BOMB!');
+    }
 
-    onBoxClick ({ row, column, clicked = false, flagged = false, currentBox }) {
+    onBoxClick ({ row, column, clicked = false, flagged = false, doubleClicked = false, currentBox }) {
         let { data: { containsBomb, value } } = currentBox;
         const isClickable = !flagged && clicked;
         
@@ -84,13 +89,26 @@ class Board extends Component {
             let board = this.state.board;
             
             if (containsBomb && isClickable) {
-                // @todo reset timer/disable board, etc
-                alert('YOU LOSE!\n\n\n YOU CLICKED ON A BOMB!');
-        
+                this.showBombAlert();
                 board[row][column].clicked = true;
-            } else if (value === 0 && isClickable) {
+            } else if ((value === 0 && isClickable) || doubleClicked) {
                 // you clicked on an empty space, need to expand out
-                board = calculateEmptySpacesOnBoard({ board: this.state.board, row, column });
+                const checkedPoints = {};
+                board = calculateEmptySpacesOnBoard({ board: this.state.board, row, column }, checkedPoints, doubleClicked);
+                
+                if (doubleClicked) {
+                    // check if anything from double click was a bomb
+                    const hasBomb = Object.keys(checkedPoints).reduce((isBomb, key) => {
+                        const [ r, c ] = key.split('|');
+                        const block = board[r][c];
+                        
+                        return isBomb || block.containsBomb;
+                    }, false);
+                    
+                    if (hasBomb) {
+                        this.showBombAlert();
+                    }
+                }
             } else {
                 board[row][column].clicked = clicked;
                 board[row][column].flagged = flagged;
