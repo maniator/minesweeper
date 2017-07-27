@@ -8,6 +8,7 @@ const BlockStyled = style.div`
     border: 1px solid grey;
     display: inline-block;
     white-space: nowrap;
+    text-align: center;
     background-color: ${({ clicked, flagged, containsBomb }) => {
     if (clicked) {
         if (containsBomb) {
