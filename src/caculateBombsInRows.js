@@ -45,19 +45,77 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
     board.forEach((rowArray, rowIndex) => {
         rowArray.forEach((box, boxIndex) => {
             if (box.containsBomb) {
+                //gauche
                 if (boxIndex > 0) {
                     rowArray[boxIndex - 1].value += 1;
+                    if (boxIndex > 1) {
+                        rowArray[boxIndex - 2].value += 1;
+                    }
                 }
+
+                //droite
                 if (boxIndex < (columns - 1)) {
                     rowArray[boxIndex + 1].value += 1;
+                    if (boxIndex < (columns - 2)) {
+                        rowArray[boxIndex + 2].value += 1;
+                    }
                 }
 
+                //haut
                 if (rowIndex > 0) {
                     board[rowIndex - 1][boxIndex].value += 1;
+                    if (rowIndex > 1) {
+                        board[rowIndex - 2][boxIndex].value += 1;
+                    }
                 }
 
+                //bas
                 if (rowIndex < (rows - 1)) {
                     board[rowIndex + 1][boxIndex].value += 1;
+                    if (rowIndex < (rows - 2)) {
+                        board[rowIndex + 2][boxIndex].value += 1;
+                    }
+                }
+
+                // diagonal
+                // haut droit
+                if(rowIndex > 0 && boxIndex > 0){
+                    board[rowIndex - 1][boxIndex -1].value += 1;
+                    if(rowIndex > 1 && boxIndex > 1){
+                        board[rowIndex - 2][boxIndex -2].value += 1;
+                        board[rowIndex - 1][boxIndex -2].value += 1;
+                        board[rowIndex - 2][boxIndex -1].value += 1;
+                    }
+                }
+
+                // haut gauche
+                if(rowIndex > 0 && boxIndex < (columns - 1)){
+                    board[rowIndex -1][boxIndex +1].value += 1;
+                    if(rowIndex > 1 && boxIndex < (columns - 2)){
+                        board[rowIndex -2][boxIndex +2].value += 1;
+                        board[rowIndex -2][boxIndex +1].value += 1;
+                        board[rowIndex -1][boxIndex +2].value += 1;
+                    }
+                }
+
+                //bas droit
+                if (rowIndex < (rows - 1) && boxIndex > 0) {
+                    board[rowIndex +1][boxIndex -1].value += 1;
+                    if (rowIndex < (rows - 2) && boxIndex > 1) {
+                        board[rowIndex +2][boxIndex -2].value += 1;
+                        board[rowIndex +1][boxIndex -2].value += 1;
+                        board[rowIndex +2][boxIndex -1].value += 1;
+                    }
+                }
+
+                //bas gauche
+                if (rowIndex < (rows - 1) && boxIndex < (columns - 1)) {
+                    board[rowIndex +1][boxIndex +1].value += 1;
+                    if (rowIndex < (rows - 2) && boxIndex < (columns - 2)) {
+                        board[rowIndex +2][boxIndex +2].value += 1;
+                        board[rowIndex +1][boxIndex +2].value += 1;
+                        board[rowIndex +2][boxIndex +1].value += 1;
+                    }
                 }
             }
         });
