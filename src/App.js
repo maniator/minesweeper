@@ -32,12 +32,12 @@ class Block extends Component {
     constructor ({data}) {
         super();
 
-        // use a copy of the data as state
-        this.state = JSON.parse(JSON.stringify(data));
+        this.state = data;
     }
 
     render () {
-        const clickedLetter = this.state.containsBomb ? 'B' : this.props.data.value;
+        const { data: { value } } = this.props;
+        const clickedLetter = this.state.containsBomb ? 'B' : (value > 0 ? value : '');
 
         return <BlockStyled
             onClick={(e) => this.handleClick(e)}
@@ -61,6 +61,11 @@ class Block extends Component {
 
     handleClick (e) {
         if (!this.state.clicked && !this.state.flagged) {
+            this.props.onBoxClick({
+                row: this.props.rowIndex,
+                column: this.props.index,
+                currentBox: this.props,
+            });
             this.setState({
                 clicked: true,
             });
@@ -71,8 +76,14 @@ const RowWrapper = style.div`
     display: flex;
 `;
 
-const Row = ({ currentRow, id }) => {
-    const blocks = currentRow.map((blockData, index) => <Block key={`block_${index}_${id}`} data={blockData} />);
+const Row = ({ currentRow, id, rowIndex, onBoxClick }) => {
+    const blocks = currentRow.map((blockData, index) => <Block
+        key={`block_${index}_${id}`}
+        index={index}
+        rowIndex={rowIndex}
+        onBoxClick={onBoxClick}
+        data={blockData}
+    />);
 
     return (
         <RowWrapper>
@@ -141,21 +152,48 @@ const calculateBombsInRows = ({ rows, columns, bombs }) => {
     return board;
 };
 
-const Board = ({ rows = 10, columns = 10, bombs = 15 }) => {
-    const board = calculateBombsInRows({rows, columns, bombs });
-    const blocks = board.map((currentRow, index) => {
-        const key = `row_${index}`;
-        return (
-            <Row key={key} id={key} currentRow={currentRow} />
-        );
-    });
+class Board extends Component {
+    constructor (props) {
+        super(props);
 
-    return (
-        <div>
-            {blocks}
-        </div>
-    );
-};
+        const { rows = 10, columns = 10, bombs = 25 } = props;
+
+        this.state = {
+            board: calculateBombsInRows({rows, columns, bombs}),
+        };
+    }
+
+    onBoxClick ({ row, column, currentBox }) {
+        const { data: { containsBomb, value } } = currentBox;
+        const checked = [];
+        if (containsBomb) {
+            // @todo reset timer/disable board, etc
+            alert('YOU LOSE!\n\n\n YOU CLICKED ON A BOMB!');
+        } else if (value === 0) {
+            // you clicked on an empty space, need to expand out
+            console.log('YOU CLICKED ON AN EMPTY SPACE');
+        }
+    }
+
+    render () {
+        const blocks = this.state.board.map((currentRow, index) => {
+            const key = `row_${index}`;
+            return (
+                <Row key={key} id={key}
+                     rowIndex={index}
+                     currentRow={currentRow}
+                     onBoxClick={(e) => this.onBoxClick(e)}
+                />
+            );
+        });
+
+        return (
+            <div>
+                {blocks}
+            </div>
+        );
+    }
+}
 
 class App extends Component {
   render() {
