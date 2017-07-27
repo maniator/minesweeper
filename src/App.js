@@ -98,7 +98,7 @@ class Board extends Component {
     constructor (props) {
         super(props);
 
-        const { rows = 10, columns = 10, bombs = 25 } = props;
+        const { rows = 10, columns = 10, bombs = 10 } = props;
 
         this.state = {
             board: calculateBombsInRows({ rows, columns, bombs }),
