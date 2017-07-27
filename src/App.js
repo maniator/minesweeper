@@ -43,6 +43,14 @@ class Timer extends Component {
     }
 }
 
+const NewGameButton = style.button`
+    color: white;
+    padding: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    background: black;
+`;
+
 class Board extends Component {
     blocksGotten = 0;
 
@@ -59,6 +67,13 @@ class Board extends Component {
         const { rows = 10, columns = 10, bombs = 10 } = this.props;
         
         return calculateBombsInRows({ rows, columns, bombs, noBomb });
+    }
+    
+    newGame (callback = () => null) {
+        this.setState({
+            started: false,
+            board: this.generateNewBoard(),
+        }, callback);
     }
 
     onBoxClick ({ row, column, clicked = false, flagged = false, currentBox }) {
@@ -83,7 +98,7 @@ class Board extends Component {
     
             this.setState({
                 board,
-            }, () => this.props.startTimer());
+            });
         };
         
         if (!this.state.started) {
@@ -127,7 +142,12 @@ class Board extends Component {
     render () {
         return (
             <div>
-                {this.getBlocks()}
+                <div>
+                    {this.getBlocks()}
+                </div>
+    
+                { this.state.started ? <Timer/> : <TimerWrapper>0</TimerWrapper> }
+                <NewGameButton onClick={() => this.newGame()}>New Game</NewGameButton>
             </div>
         );
     }
@@ -143,15 +163,9 @@ class App extends Component {
     }
     render() {
         return (
-            <div>
                 <Board
-                    startTimer={() => this.setState({
-                        timerStarted: true
-                    })}
                     bombs={15}
                 />
-                { this.state.timerStarted ? <Timer/> : <TimerWrapper>0</TimerWrapper> }
-            </div>
         );
     }
 }
