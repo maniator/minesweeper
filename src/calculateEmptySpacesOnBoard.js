@@ -1,41 +1,44 @@
 export const calculateEmptySpacesOnBoard = ({ board, row, column }, checkedPoints = {}) => {
+    // make a copy
+    let boardCopy = JSON.parse(JSON.stringify(board));
+
     if (row < 0 || column < 0) {
-        return board;
+        return boardCopy;
     }
 
-    const rowArray = board[row];
+    const rowArray = boardCopy[row];
 
     if (!rowArray) {
-        return board;
+        return boardCopy;
     }
+
     const point = rowArray[column];
 
-    if (!point) {
-        return board;
+    if (!point || point.flagged) {
+        return boardCopy;
     }
 
     const key = `${row}${column}`;
 
     if (checkedPoints[key]) {
-        return board;
+        return boardCopy;
     }
 
     point.clicked = true;
-    board.clicked += 1;
     checkedPoints[key] = true;
 
     if (point.value === 0) {
         // once this point has been checked and is empty, check on top, bottom, left, and right of it.
-        calculateEmptySpacesOnBoard({ board, row: row + 1, column: column }, checkedPoints);
-        calculateEmptySpacesOnBoard({ board, row: row - 1, column: column }, checkedPoints);
-        calculateEmptySpacesOnBoard({ board, row: row, column: column + 1 }, checkedPoints);
-        calculateEmptySpacesOnBoard({ board, row: row, column: column - 1 }, checkedPoints);
+        boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row + 1, column: column }, checkedPoints);
+        boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row - 1, column: column }, checkedPoints);
+        boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row, column: column + 1 }, checkedPoints);
+        boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row, column: column - 1 }, checkedPoints);
+        // diagonals
+        boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row - 1, column: column - 1 }, checkedPoints);
+        boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row - 1, column: column + 1 }, checkedPoints);
+        boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row + 1, column: column + 1 }, checkedPoints);
+        boardCopy = calculateEmptySpacesOnBoard({ board: boardCopy, row: row + 1, column: column - 1 }, checkedPoints);
     }
 
-    // at top corner and there is nothing to do
-    if (row === 0 && column === 0) {
-        return board;
-    }
-
-    return board;
+    return boardCopy;
 };

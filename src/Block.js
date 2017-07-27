@@ -8,6 +8,7 @@ const BlockStyled = style.div`
     border: 1px solid grey;
     display: inline-block;
     white-space: nowrap;
+    text-align: center;
     background-color: ${({ clicked, flagged, containsBomb }) => {
     if (clicked) {
         if (containsBomb) {
@@ -41,7 +42,9 @@ export class Block extends Component {
         return <BlockStyled
             onClick={(e) => this.handleClick(e)}
             onContextMenu={(e) => this.handleContextMenu(e)}
-            {...this.state}
+            clicked={this.state.clicked}
+            flagged={this.state.flagged}
+            containsBomb={this.state.containsBomb}
         >
             {this.state.clicked ? clickedLetter : ''}
             {this.state.flagged ? 'F' : ''}
@@ -53,21 +56,28 @@ export class Block extends Component {
         if (!this.state.clicked) {
             this.setState({
                 flagged: !this.state.flagged,
-            });
+            }, () => this.props.onBoxClick({
+                row: this.props.rowIndex,
+                column: this.props.index,
+                currentBox: this.props,
+                flagged: this.state.flagged,
+                clicked: false,
+            }));
         }
 
     }
 
     handleClick (e) {
         if (!this.state.clicked && !this.state.flagged) {
-            this.props.onBoxClick({
+            this.setState({
+                clicked: true,
+            }, () => this.props.onBoxClick({
                 row: this.props.rowIndex,
                 column: this.props.index,
                 currentBox: this.props,
-            });
-            this.setState({
-                clicked: true,
-            });
+                flagged: this.state.flagged,
+                clicked: this.state.clicked,
+            }));
         }
     }
 }

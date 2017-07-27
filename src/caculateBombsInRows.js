@@ -1,5 +1,7 @@
 // very verbose variable
 const MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW = 2;
+// not the best randomizer, but can be optimized later
+const bombSeed = () => Math.random() > 0.8;
 
 /**
  * Currently there is a bug in this code in that it will create at MAX the
@@ -9,9 +11,10 @@ const MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW = 2;
  * @param rows
  * @param columns
  * @param bombs
- * @returns {Array}
+ * @param noBomb
+ * @return {Array}
  */
-export const calculateBombsInRows = ({ rows, columns, bombs }) => {
+export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
     const board = [];
     let bombCount = 0;
     let bombsInARow = 0;
@@ -19,11 +22,12 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
     for (let r = 0; r < rows; ++r) {
         const rowArray = [];
         for (let c = 0; c < columns; ++c) {
-            // not the best randomizer, but can be optimized later
-            const hasBomb = Math.random() > .75;
+            const hasBomb = bombSeed();
             let containsBomb = false;
+            
+            const cannotHaveBomb = noBomb.row === r && noBomb.column === c;
 
-            if (hasBomb && bombCount < bombs && bombsInARow < MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW) {
+            if (hasBomb && bombCount < bombs && bombsInARow < MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW && !cannotHaveBomb) {
                 containsBomb = true;
                 bombCount += 1;
                 bombsInARow += 1;
@@ -47,9 +51,27 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
             if (box.containsBomb) {
                 if (boxIndex > 0) {
                     rowArray[boxIndex - 1].value += 1;
+
+                    // check corner diagonals
+                    if (rowIndex > 0) {
+                        board[rowIndex - 1][boxIndex - 1].value += 1;
+                    }
+
+                    if (rowIndex < (rows - 1)) {
+                        board[rowIndex + 1][boxIndex - 1].value += 1;
+                    }
                 }
                 if (boxIndex < (columns - 1)) {
                     rowArray[boxIndex + 1].value += 1;
+
+                    // check corner diagonals
+                    if (rowIndex > 0) {
+                        board[rowIndex - 1][boxIndex + 1].value += 1;
+                    }
+
+                    if (rowIndex < (rows - 1)) {
+                        board[rowIndex + 1][boxIndex + 1].value += 1;
+                    }
                 }
 
                 if (rowIndex > 0) {
@@ -62,11 +84,6 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
             }
         });
     });
-
-    // @todo use these counts for something
-    board.bombCount = bombCount;
-    board.clicked = 0;
-    board.maxClicks = ( rows * columns ) - bombCount;
 
     return board;
 };
