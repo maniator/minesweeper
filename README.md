@@ -17,7 +17,7 @@ Defaults to 10 of each.
 --------------
 
 Example end of game view:
-![](https://i.imgur.com/grCjPOi.png)
+![](https://i.imgur.com/L2yTtvG.png)
 
 Example game with some flags set:
-![](https://i.imgur.com/8PsP7Io.png)
+![](https://i.imgur.com/I9IipqW.png)
