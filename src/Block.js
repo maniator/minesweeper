@@ -53,6 +53,7 @@ export class Block extends Component {
     }
 
     handleContextMenu (e) {
+        e.persist();
         e.preventDefault();
         
         if (!this.state.clicked) {
@@ -70,6 +71,7 @@ export class Block extends Component {
     }
     
     handleDoubleClick (e) {
+        e.persist();
         e.preventDefault();
       
         if (this.state.clicked && !this.state.flagged) {
@@ -85,6 +87,8 @@ export class Block extends Component {
     }
 
     handleClick (e) {
+        e.persist();
+        
         if (!this.state.clicked && !this.state.flagged) {
             this.setState({
                 clicked: true,

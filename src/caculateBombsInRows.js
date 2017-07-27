@@ -18,12 +18,62 @@ export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
     const board = [];
     let bombCount = 0;
     let bombsInARow = 0;
+    const emptyCells = {};
+    const increaseCellValue = ({ row, column }, board) => {
+        board[row][column].value += 1;
+        if (board[row][column].value >= 4) {
+            delete emptyCells[`${row}|${column}`];
+        }
+    };
+    
+    const addBomb = ({ rowIndex, boxIndex, box, board }) => {
+        if (box.containsBomb) {
+            // remove from no-bombs list
+            delete emptyCells[`${rowIndex}|${boxIndex}`];
+            
+            if (boxIndex > 0) {
+                increaseCellValue({ row: rowIndex, column: boxIndex - 1 }, board);
+                
+                // check corner diagonals
+                if (rowIndex > 0) {
+                    increaseCellValue({ row: rowIndex - 1, column: boxIndex - 1 }, board);
+                }
+                
+                if (rowIndex < (rows - 1)) {
+                    increaseCellValue({ row: rowIndex + 1, column: boxIndex - 1 }, board);
+                }
+            }
+            if (boxIndex < (columns - 1)) {
+                increaseCellValue({ row: rowIndex, column: boxIndex + 1 }, board);
+                
+                // check corner diagonals
+                if (rowIndex > 0) {
+                    increaseCellValue({ row: rowIndex - 1, column: boxIndex + 1 }, board);
+                }
+                
+                if (rowIndex < (rows - 1)) {
+                    increaseCellValue({ row: rowIndex + 1, column: boxIndex + 1 }, board);
+                }
+            }
+            
+            if (rowIndex > 0) {
+                increaseCellValue({ row: rowIndex - 1, column: boxIndex }, board);
+            }
+            
+            if (rowIndex < (rows - 1)) {
+                increaseCellValue({ row: rowIndex + 1, column: boxIndex }, board);
+            }
+        }
+    };
+    
     // create row/column array
     for (let r = 0; r < rows; ++r) {
         const rowArray = [];
         for (let c = 0; c < columns; ++c) {
             const hasBomb = bombSeed();
             let containsBomb = false;
+    
+            emptyCells[`${r}|${c}`] = true;
             
             const cannotHaveBomb = noBomb.row === r && noBomb.column === c;
 
@@ -48,42 +98,44 @@ export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
     // place numbers on boxes
     board.forEach((rowArray, rowIndex) => {
         rowArray.forEach((box, boxIndex) => {
-            if (box.containsBomb) {
-                if (boxIndex > 0) {
-                    rowArray[boxIndex - 1].value += 1;
-
-                    // check corner diagonals
-                    if (rowIndex > 0) {
-                        board[rowIndex - 1][boxIndex - 1].value += 1;
-                    }
-
-                    if (rowIndex < (rows - 1)) {
-                        board[rowIndex + 1][boxIndex - 1].value += 1;
-                    }
-                }
-                if (boxIndex < (columns - 1)) {
-                    rowArray[boxIndex + 1].value += 1;
-
-                    // check corner diagonals
-                    if (rowIndex > 0) {
-                        board[rowIndex - 1][boxIndex + 1].value += 1;
-                    }
-
-                    if (rowIndex < (rows - 1)) {
-                        board[rowIndex + 1][boxIndex + 1].value += 1;
-                    }
-                }
-
-                if (rowIndex > 0) {
-                    board[rowIndex - 1][boxIndex].value += 1;
-                }
-
-                if (rowIndex < (rows - 1)) {
-                    board[rowIndex + 1][boxIndex].value += 1;
-                }
-            }
+            addBomb({
+                rowIndex,
+                boxIndex,
+                box,
+                board
+            });
         });
     });
+    
+    // fill in missing bombs starting from the top corner (not the best logic, I know)
+    if (bombCount !== bombs) {
+        const emptyCellMap = Object.keys(emptyCells).map((cell) => {
+            const [ r, c ] = cell.split('|');
+            
+            return {
+                rowIndex: Number(r),
+                boxIndex: Number(c),
+                box: board[r][c],
+            };
+        });
+        
+        for (let i = 0; i < emptyCellMap.length && bombCount <= bombs; ++i) {
+            const { rowIndex, boxIndex, box } = emptyCellMap[i];
+    
+            const cannotHaveBomb = noBomb.row === rowIndex && noBomb.column === boxIndex;
+            
+            if (!cannotHaveBomb) {
+                box.containsBomb = true;
+                bombCount += 1;
+                addBomb({
+                    rowIndex,
+                    boxIndex,
+                    box,
+                    board
+                });
+            }
+        }
+    }
 
     return board;
 };
