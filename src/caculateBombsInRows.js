@@ -11,9 +11,10 @@ const bombSeed = () => Math.random() > 0.8;
  * @param rows
  * @param columns
  * @param bombs
- * @returns {Array}
+ * @param noBomb
+ * @return {Array}
  */
-export const calculateBombsInRows = ({ rows, columns, bombs }) => {
+export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
     const board = [];
     let bombCount = 0;
     let bombsInARow = 0;
@@ -23,8 +24,10 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
         for (let c = 0; c < columns; ++c) {
             const hasBomb = bombSeed();
             let containsBomb = false;
+            
+            const cannotHaveBomb = noBomb.row === r && noBomb.column === c;
 
-            if (hasBomb && bombCount < bombs && bombsInARow < MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW) {
+            if (hasBomb && bombCount < bombs && bombsInARow < MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW && !cannotHaveBomb) {
                 containsBomb = true;
                 bombCount += 1;
                 bombsInARow += 1;

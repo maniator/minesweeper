@@ -48,35 +48,65 @@ class Board extends Component {
 
     constructor (props) {
         super(props);
-
-        const { rows = 10, columns = 10, bombs = 10 } = props;
-
+        
         this.state = {
-            board: calculateBombsInRows({ rows, columns, bombs }),
+            started: false,
+            board: this.generateNewBoard(),
         };
+    }
+    
+    generateNewBoard (noBomb = {}) {
+        const { rows = 10, columns = 10, bombs = 10 } = this.props;
+        
+        return calculateBombsInRows({ rows, columns, bombs, noBomb });
     }
 
     onBoxClick ({ row, column, clicked = false, flagged = false, currentBox }) {
-        const { data: { containsBomb, value } } = currentBox;
+        let { data: { containsBomb, value } } = currentBox;
         const isClickable = !flagged && clicked;
-        let board = this.state.board;
-
-        if (containsBomb && isClickable) {
-            // @todo reset timer/disable board, etc
-            alert('YOU LOSE!\n\n\n YOU CLICKED ON A BOMB!');
-
-            board[row][column].clicked = true;
-        } else if (value === 0 && isClickable) {
-            // you clicked on an empty space, need to expand out
-            board = calculateEmptySpacesOnBoard({ board: this.state.board, row, column });
+        
+        const clickEvent = () => {
+            let board = this.state.board;
+            
+            if (containsBomb && isClickable) {
+                // @todo reset timer/disable board, etc
+                alert('YOU LOSE!\n\n\n YOU CLICKED ON A BOMB!');
+        
+                board[row][column].clicked = true;
+            } else if (value === 0 && isClickable) {
+                // you clicked on an empty space, need to expand out
+                board = calculateEmptySpacesOnBoard({ board: this.state.board, row, column });
+            } else {
+                board[row][column].clicked = clicked;
+                board[row][column].flagged = flagged;
+            }
+    
+            this.setState({
+                board,
+            }, () => this.props.startTimer());
+        };
+        
+        if (!this.state.started) {
+            this.setState({
+                started: true,
+            }, () => {
+                // reseed if the first click contains a bomb so that you cannot lose on first turn
+                if (containsBomb && isClickable) {
+                    this.setState({
+                        board: this.generateNewBoard({ row, column })
+                    }, () => {
+                        const current = this.state.board[row][column];
+                        containsBomb = false;
+                        value = current.value;
+                        clickEvent();
+                    })
+                } else {
+                    clickEvent();
+                }
+            });
         } else {
-            board[row][column].clicked = clicked;
-            board[row][column].flagged = flagged;
+            clickEvent();
         }
-
-        this.setState({
-            board,
-        }, () => this.props.startTimer());
     }
 
     getBlocks () {
