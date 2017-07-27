@@ -63,5 +63,10 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
         });
     });
 
+    // @todo use these counts for something
+    board.bombCount = bombCount;
+    board.clicked = 0;
+    board.maxClicks = ( rows * columns ) - bombCount;
+
     return board;
 };

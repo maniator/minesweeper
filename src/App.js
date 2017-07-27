@@ -2,97 +2,46 @@ import React, { Component } from 'react';
 import style from 'styled-components';
 import {calculateBombsInRows} from "./caculateBombsInRows";
 import {calculateEmptySpacesOnBoard} from "./calculateEmptySpacesOnBoard";
+import {Row} from "./Row";
 
-
-const BlockStyled = style.div`
-    width: 1rem;
-    height: 1rem;
-    padding: 1rem;
-    border: 1px solid grey;
-    display: inline-block;
-    white-space: nowrap;
-    background-color: ${({ clicked, flagged, containsBomb }) => {
-        if (clicked) {
-            if (containsBomb) {
-                return 'red';
-            } else {
-                return 'white';
-            }
-        } else if (flagged) {
-            return 'purple';
-        } else {
-            return 'black';
-        }
-    }};
-    
-    &:hover {
-        cursor: ${({ clicked }) => clicked ? 'not-allowed' : 'pointer' };
-    }
+const TimerWrapper = style.div`
+    width: 20vw;
+    height: 3rem;
+    font-size: 2.5rem;
+    font-weight: bold;
 `;
 
-class Block extends Component {
-    constructor ({data}) {
+class Timer extends Component {
+    constructor () {
         super();
 
-        this.state = data;
+        this.state = {
+            time: 0,
+        };
+    }
+
+    componentDidMount () {
+        this.startTime();
+    }
+
+    startTime () {
+        const timer = () => {
+            this.setState({
+                time: this.state.time + 1,
+            });
+
+            setTimeout(timer, 1000);
+        };
+
+        return timer();
     }
 
     render () {
-        const { data: { value } } = this.props;
-        const clickedLetter = this.state.containsBomb ? 'B' : (value > 0 ? value : '');
-
-        return <BlockStyled
-            onClick={(e) => this.handleClick(e)}
-            onContextMenu={(e) => this.handleContextMenu(e)}
-            {...this.state}
-        >
-            {this.state.clicked ? clickedLetter : ''}
-            {this.state.flagged ? 'F' : ''}
-        </BlockStyled>
-    }
-
-    handleContextMenu (e) {
-        e.preventDefault();
-        if (!this.state.clicked) {
-            this.setState({
-                flagged: !this.state.flagged,
-            });
-        }
-
-    }
-
-    handleClick (e) {
-        if (!this.state.clicked && !this.state.flagged) {
-            this.props.onBoxClick({
-                row: this.props.rowIndex,
-                column: this.props.index,
-                currentBox: this.props,
-            });
-            this.setState({
-                clicked: true,
-            });
-        }
+        return (
+            <TimerWrapper>{this.state.time}</TimerWrapper>
+        )
     }
 }
-const RowWrapper = style.div`
-    display: flex;
-`;
-
-const Row = ({ currentRow, id, rowIndex, onBoxClick }) => {
-    const blocks = currentRow.map((blockData, index) => <Block
-        key={`block_${index}_${id}`}
-        index={index}
-        rowIndex={rowIndex}
-        onBoxClick={onBoxClick}
-        data={blockData}
-    />);
-
-    return (
-        <RowWrapper>
-            {blocks}
-        </RowWrapper>
-    );
-};
 
 class Board extends Component {
     constructor (props) {
@@ -107,7 +56,7 @@ class Board extends Component {
 
     onBoxClick ({ row, column, currentBox }) {
         const { data: { containsBomb, value } } = currentBox;
-        const checked = [];
+
         if (containsBomb) {
             // @todo reset timer/disable board, etc
             alert('YOU LOSE!\n\n\n YOU CLICKED ON A BOMB!');
@@ -118,7 +67,17 @@ class Board extends Component {
             this.setState({
                 board,
             });
+        } else {
+            const board = this.state.board;
+
+            board.clicked += 1;
+
+            this.setState({
+                board,
+            });
         }
+
+        this.props.startTimer();
     }
 
     render () {
@@ -142,11 +101,23 @@ class Board extends Component {
 }
 
 class App extends Component {
-  render() {
-    return (
-        <Board />
-    );
-  }
+    constructor () {
+        super();
+
+        this.state = {
+            timerStarted: false,
+        }
+    }
+    render() {
+        return (
+            <div>
+                <Board startTimer={() => this.setState({
+                    timerStarted: true
+                })}/>
+                { this.state.timerStarted ? <Timer/> : null }
+            </div>
+        );
+    }
 }
 
 export default App;

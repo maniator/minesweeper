@@ -21,6 +21,7 @@ export const calculateEmptySpacesOnBoard = ({ board, row, column }, checkedPoint
     }
 
     point.clicked = true;
+    board.clicked += 1;
     checkedPoints[key] = true;
 
     if (point.value === 0) {
