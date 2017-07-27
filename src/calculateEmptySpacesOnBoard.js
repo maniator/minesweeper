@@ -14,7 +14,6 @@ export const calculateEmptySpacesOnBoard = ({ board, row, column }, checkedPoint
         return board;
     }
 
-    console.log('POINT', JSON.stringify(point));
     const key = `${row}${column}`;
 
     if (checkedPoints[key]) {
