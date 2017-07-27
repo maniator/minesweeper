@@ -1,6 +1,10 @@
 This is a forked project. I juste wanted to see how the game would look like with a wider neighboor.
 It seems to me that this version is really hard to play
 
+Instead of looking only one square around the bomb (creating a 3x3 squar around the bomb), it also looks one layer widther (creating a 5x5 square around the bomb)
+
+
+--------------
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
