@@ -37,7 +37,7 @@ class Block extends Component {
     }
 
     render () {
-        const clickedLetter = this.state.containsBomb ? 'B' : 'C';
+        const clickedLetter = this.state.containsBomb ? 'B' : this.props.data.value;
 
         return <BlockStyled
             onClick={(e) => this.handleClick(e)}
@@ -109,7 +109,7 @@ const calculateBombsInRows = ({ rows, columns, bombs }) => {
             rowArray.push({
                 clicked: false,
                 flagged: false,
-                value: -1, // -1 will mean empty (or will mean BOMB if containsBomb === true)
+                value: 0, // 0 will mean empty (or will mean BOMB if containsBomb === true)
                 containsBomb,
             });
         }
@@ -117,6 +117,26 @@ const calculateBombsInRows = ({ rows, columns, bombs }) => {
     }
 
     // place numbers on boxes
+    board.forEach((rowArray, rowIndex) => {
+        rowArray.forEach((box, boxIndex) => {
+           if (box.containsBomb) {
+               if (boxIndex > 0) {
+                   rowArray[boxIndex - 1].value += 1;
+               }
+               if (boxIndex < (columns - 1)) {
+                   rowArray[boxIndex + 1].value += 1;
+               }
+
+               if (rowIndex > 0) {
+                   board[rowIndex - 1][boxIndex].value += 1;
+               }
+
+               if (rowIndex < (rows - 1)) {
+                   board[rowIndex + 1][boxIndex].value += 1;
+               }
+           }
+        });
+    });
 
     return board;
 };
