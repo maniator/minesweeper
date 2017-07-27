@@ -47,9 +47,27 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
             if (box.containsBomb) {
                 if (boxIndex > 0) {
                     rowArray[boxIndex - 1].value += 1;
+
+                    // check corner diagonals
+                    if (rowIndex > 0) {
+                        board[rowIndex - 1][boxIndex - 1].value += 1;
+                    }
+
+                    if (rowIndex < (rows - 1)) {
+                        board[rowIndex + 1][boxIndex - 1].value += 1;
+                    }
                 }
                 if (boxIndex < (columns - 1)) {
                     rowArray[boxIndex + 1].value += 1;
+
+                    // check corner diagonals
+                    if (rowIndex > 0) {
+                        board[rowIndex - 1][boxIndex + 1].value += 1;
+                    }
+
+                    if (rowIndex < (rows - 1)) {
+                        board[rowIndex + 1][boxIndex + 1].value += 1;
+                    }
                 }
 
                 if (rowIndex > 0) {
@@ -59,6 +77,7 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
                 if (rowIndex < (rows - 1)) {
                     board[rowIndex + 1][boxIndex].value += 1;
                 }
+
             }
         });
     });

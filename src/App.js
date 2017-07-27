@@ -115,7 +115,7 @@ class App extends Component {
                     startTimer={() => this.setState({
                         timerStarted: true
                     })}
-                    bombs={20}
+                    bombs={15}
                 />
                 { this.state.timerStarted ? <Timer/> : <TimerWrapper>0</TimerWrapper> }
             </div>

@@ -30,6 +30,11 @@ export const calculateEmptySpacesOnBoard = ({ board, row, column }, checkedPoint
         calculateEmptySpacesOnBoard({ board, row: row - 1, column: column }, checkedPoints);
         calculateEmptySpacesOnBoard({ board, row: row, column: column + 1 }, checkedPoints);
         calculateEmptySpacesOnBoard({ board, row: row, column: column - 1 }, checkedPoints);
+        // diagonals
+        calculateEmptySpacesOnBoard({ board, row: row - 1, column: column - 1 }, checkedPoints);
+        calculateEmptySpacesOnBoard({ board, row: row - 1, column: column + 1 }, checkedPoints);
+        calculateEmptySpacesOnBoard({ board, row: row + 1, column: column + 1 }, checkedPoints);
+        calculateEmptySpacesOnBoard({ board, row: row + 1, column: column - 1 }, checkedPoints);
     }
 
     // at top corner and there is nothing to do
