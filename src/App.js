@@ -111,10 +111,12 @@ class App extends Component {
     render() {
         return (
             <div>
-                <Board startTimer={() => this.setState({
-                    timerStarted: true
-                })}/>
-                { this.state.timerStarted ? <Timer/> : null }
+                <Board
+                    startTimer={() => this.setState({
+                        timerStarted: true
+                    })}
+                />
+                { this.state.timerStarted ? <Timer/> : <TimerWrapper>0</TimerWrapper> }
             </div>
         );
     }
