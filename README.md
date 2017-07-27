@@ -6,7 +6,7 @@ To run app locally please run:
     npm start
 ```
 
-You can also see the currently built app at: http://apps.neallub.in/minesweeper/docs/
+You can also see the currently built app at: [mineweeper.herokuapp.com](https://mineweeper.herokuapp.com/)
 
 
 --------------
