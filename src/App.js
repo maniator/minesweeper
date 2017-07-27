@@ -44,6 +44,8 @@ class Timer extends Component {
 }
 
 class Board extends Component {
+    blocksGotten = 0;
+
     constructor (props) {
         super(props);
 
@@ -54,35 +56,36 @@ class Board extends Component {
         };
     }
 
-    onBoxClick ({ row, column, currentBox }) {
+    onBoxClick ({ row, column, clicked = false, flagged = false, currentBox }) {
         const { data: { containsBomb, value } } = currentBox;
+        const isClickable = !flagged && clicked;
+        let board = this.state.board;
 
-        if (containsBomb) {
+        if (containsBomb && isClickable) {
             // @todo reset timer/disable board, etc
             alert('YOU LOSE!\n\n\n YOU CLICKED ON A BOMB!');
-        } else if (value === 0) {
+
+            board[row][column].clicked = true;
+        } else if (value === 0 && isClickable) {
             // you clicked on an empty space, need to expand out
-            const board = calculateEmptySpacesOnBoard({board: this.state.board, row, column});
-
-            this.setState({
-                board,
-            });
+            board = calculateEmptySpacesOnBoard({ board: this.state.board, row, column });
         } else {
-            const board = this.state.board;
-
-            board.clicked += 1;
-
-            this.setState({
-                board,
-            });
+            board[row][column].clicked = clicked;
+            board[row][column].flagged = flagged;
         }
+
+        this.setState({
+            board,
+        });
 
         this.props.startTimer();
     }
 
-    render () {
-        const blocks = this.state.board.map((currentRow, index) => {
-            const key = `row_${index}`;
+    getBlocks () {
+        this.blocksGotten += 1;
+
+        return this.state.board.map((currentRow, index) => {
+            const key = `row_${index}_${this.blocksGotten}`;
             return (
                 <Row key={key} id={key}
                      rowIndex={index}
@@ -91,10 +94,12 @@ class Board extends Component {
                 />
             );
         });
+    }
 
+    render () {
         return (
             <div>
-                {blocks}
+                {this.getBlocks()}
             </div>
         );
     }

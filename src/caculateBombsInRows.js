@@ -77,15 +77,9 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
                 if (rowIndex < (rows - 1)) {
                     board[rowIndex + 1][boxIndex].value += 1;
                 }
-
             }
         });
     });
-
-    // @todo use these counts for something
-    board.bombCount = bombCount;
-    board.clicked = 0;
-    board.maxClicks = ( rows * columns ) - bombCount;
 
     return board;
 };

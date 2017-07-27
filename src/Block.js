@@ -53,21 +53,28 @@ export class Block extends Component {
         if (!this.state.clicked) {
             this.setState({
                 flagged: !this.state.flagged,
-            });
+            }, () => this.props.onBoxClick({
+                row: this.props.rowIndex,
+                column: this.props.index,
+                currentBox: this.props,
+                flagged: this.state.flagged,
+                clicked: false,
+            }));
         }
 
     }
 
     handleClick (e) {
         if (!this.state.clicked && !this.state.flagged) {
-            this.props.onBoxClick({
+            this.setState({
+                clicked: true,
+            }, () => this.props.onBoxClick({
                 row: this.props.rowIndex,
                 column: this.props.index,
                 currentBox: this.props,
-            });
-            this.setState({
-                clicked: true,
-            });
+                flagged: this.state.flagged,
+                clicked: this.state.clicked,
+            }));
         }
     }
 }
