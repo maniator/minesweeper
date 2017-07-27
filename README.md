@@ -1,3 +1,7 @@
+This is a forked project. I juste wanted to see how the game would look like with a wider neighboor.
+It seems to me that this version is really hard to play
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 To run app locally please run:
