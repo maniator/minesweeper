@@ -20,15 +20,15 @@ export const calculateEmptySpacesOnBoard = ({ board, row, column }, checkedPoint
         return board;
     }
 
+    point.clicked = true;
+    checkedPoints[key] = true;
+
     if (point.value === 0) {
-        point.clicked = true;
-        checkedPoints[key] = true;
+        // once this point has been checked and is empty, check on top, bottom, left, and right of it.
         calculateEmptySpacesOnBoard({ board, row: row + 1, column: column }, checkedPoints);
         calculateEmptySpacesOnBoard({ board, row: row - 1, column: column }, checkedPoints);
         calculateEmptySpacesOnBoard({ board, row: row, column: column + 1 }, checkedPoints);
         calculateEmptySpacesOnBoard({ board, row: row, column: column - 1 }, checkedPoints);
-    } else {
-        point.clicked = true;
     }
 
     // at top corner and there is nothing to do

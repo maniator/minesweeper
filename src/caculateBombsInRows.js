@@ -1,6 +1,10 @@
+// very verbose variable
+const MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW = 2;
+
 /**
  * Currently there is a bug in this code in that it will create at MAX the
- *  amount of bomb param past, not exactly the amount
+ *  amount of bomb param past, not exactly the amount, can refactor to make
+ *  correct later on if need be
  *
  * @param rows
  * @param columns
@@ -10,6 +14,7 @@
 export const calculateBombsInRows = ({ rows, columns, bombs }) => {
     const board = [];
     let bombCount = 0;
+    let bombsInARow = 0;
     // create row/column array
     for (let r = 0; r < rows; ++r) {
         const rowArray = [];
@@ -18,9 +23,12 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
             const hasBomb = Math.random() > .75;
             let containsBomb = false;
 
-            if (hasBomb && bombCount < bombs) {
+            if (hasBomb && bombCount < bombs && bombsInARow < MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW) {
                 containsBomb = true;
                 bombCount += 1;
+                bombsInARow += 1;
+            } else {
+                bombsInARow = 0;
             }
 
             rowArray.push({
