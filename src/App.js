@@ -76,9 +76,7 @@ class Board extends Component {
 
         this.setState({
             board,
-        });
-
-        this.props.startTimer();
+        }, () => this.props.startTimer());
     }
 
     getBlocks () {
