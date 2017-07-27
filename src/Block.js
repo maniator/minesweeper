@@ -34,18 +34,8 @@ export class Block extends Component {
         this.state = data;
     }
 
-    render () {
-        const { data: { value } } = this.props;
-        const clickedLetter = this.state.containsBomb ? 'B' : (value > 0 ? value : '');
-
-        return <BlockStyled
-            onClick={(e) => this.handleClick(e)}
-            onContextMenu={(e) => this.handleContextMenu(e)}
-            {...this.state}
-        >
-            {this.state.clicked ? clickedLetter : ''}
-            {this.state.flagged ? 'F' : ''}
-        </BlockStyled>
+    componentWillReceiveProps (nextProps) {
+        this.setState(nextProps.data);
     }
 
     handleContextMenu (e) {
@@ -59,6 +49,7 @@ export class Block extends Component {
     }
 
     handleClick (e) {
+        console.log('CLICKED', e, JSON.stringify(this.state))
         if (!this.state.clicked && !this.state.flagged) {
             this.props.onBoxClick({
                 row: this.props.rowIndex,
@@ -70,4 +61,19 @@ export class Block extends Component {
             });
         }
     }
+
+    render () {
+        const { value } = this.state;
+        const clickedLetter = this.state.containsBomb ? 'B' : (value > 0 ? value : '');
+
+        return <BlockStyled
+            onClick={(e) => this.handleClick(e)}
+            onContextMenu={(e) => this.handleContextMenu(e)}
+            {...this.state}
+        >
+            {this.state.clicked ? clickedLetter : ''}
+            {this.state.flagged ? 'F' : ''}
+        </BlockStyled>
+    }
+
 }

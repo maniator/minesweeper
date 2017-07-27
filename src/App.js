@@ -47,11 +47,28 @@ class Board extends Component {
     constructor (props) {
         super(props);
 
-        const { rows = 10, columns = 10, bombs = 10 } = props;
-
         this.state = {
-            board: calculateBombsInRows({ rows, columns, bombs }),
+            board: [],
+            gameCount: 0,
         };
+    }
+
+    componentDidMount () {
+        const { rows = 10, columns = 10, bombs = 10 } = this.props;
+
+        this.setState({
+            board: calculateBombsInRows({ rows, columns, bombs }),
+        });
+    }
+
+    componentWillReceiveProps ({ startNew }) {
+        if (startNew) {
+            this.setState({
+                gameCount: this.state.gameCount + 1
+            });
+
+            this.componentDidMount();
+        }
     }
 
     onBoxClick ({ row, column, currentBox }) {
@@ -80,9 +97,9 @@ class Board extends Component {
         this.props.startTimer();
     }
 
-    render () {
-        const blocks = this.state.board.map((currentRow, index) => {
-            const key = `row_${index}`;
+    getBlocks () {
+        return this.state.board.map((currentRow, index) => {
+            const key = `row_${index}_${this.state.gameCount}`;
             return (
                 <Row key={key} id={key}
                      rowIndex={index}
@@ -91,10 +108,13 @@ class Board extends Component {
                 />
             );
         });
+    }
+
+    render () {
 
         return (
             <div>
-                {blocks}
+                {this.getBlocks()}
             </div>
         );
     }
@@ -106,6 +126,9 @@ class App extends Component {
 
         this.state = {
             timerStarted: false,
+            rows: 10,
+            columns: 10,
+            board: [],
         }
     }
     render() {
@@ -115,8 +138,14 @@ class App extends Component {
                     startTimer={() => this.setState({
                         timerStarted: true
                     })}
+                    {...this.state}
                 />
                 { this.state.timerStarted ? <Timer/> : <TimerWrapper>0</TimerWrapper> }
+                <button onClick={() => {
+                    this.setState({
+                        startNew: true,
+                    })
+                }}>New Game</button>
             </div>
         );
     }
