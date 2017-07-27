@@ -64,14 +64,14 @@ export class Block extends Component {
                 currentBox: this.props,
                 flagged: this.state.flagged,
                 clicked: false,
-                doubleClicked: false,
+                doubleClicked: e.buttons === 3,
             }));
         }
     }
     
     handleDoubleClick (e) {
         e.preventDefault();
-        
+      
         if (this.state.clicked && !this.state.flagged) {
             this.props.onBoxClick({
                 row: this.props.rowIndex,
@@ -94,7 +94,7 @@ export class Block extends Component {
                 currentBox: this.props,
                 flagged: this.state.flagged,
                 clicked: this.state.clicked,
-                doubleClicked: false,
+                doubleClicked: e.buttons === 3,
             }));
         }
     }
