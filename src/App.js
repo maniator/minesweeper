@@ -153,21 +153,8 @@ class Board extends Component {
     }
 }
 
-class App extends Component {
-    constructor () {
-        super();
-
-        this.state = {
-            timerStarted: false,
-        }
-    }
-    render() {
-        return (
-                <Board
-                    bombs={15}
-                />
-        );
-    }
-}
+const App = () => (
+    <Board bombs={15} />
+);
 
 export default App;
