@@ -1,5 +1,7 @@
 // very verbose variable
 const MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW = 2;
+// not the best randomizer, but can be optimized later
+const bombSeed = () => Math.random() > 0.8;
 
 /**
  * Currently there is a bug in this code in that it will create at MAX the
@@ -19,8 +21,7 @@ export const calculateBombsInRows = ({ rows, columns, bombs }) => {
     for (let r = 0; r < rows; ++r) {
         const rowArray = [];
         for (let c = 0; c < columns; ++c) {
-            // not the best randomizer, but can be optimized later
-            const hasBomb = Math.random() > .75;
+            const hasBomb = bombSeed();
             let containsBomb = false;
 
             if (hasBomb && bombCount < bombs && bombsInARow < MAX_BOMBS_NEXT_TO_EACH_OTHER_IN_ROW) {
