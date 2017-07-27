@@ -42,7 +42,9 @@ export class Block extends Component {
         return <BlockStyled
             onClick={(e) => this.handleClick(e)}
             onContextMenu={(e) => this.handleContextMenu(e)}
-            {...this.state}
+            clicked={this.state.clicked}
+            flagged={this.state.flagged}
+            containsBomb={this.state.containsBomb}
         >
             {this.state.clicked ? clickedLetter : ''}
             {this.state.flagged ? 'F' : ''}
