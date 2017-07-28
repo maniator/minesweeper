@@ -34,7 +34,7 @@ export const expandOutFromBlock = ({ board, row, column, autoClick }, checkedPoi
         newBoard = expandOutFromBlock({ board: newBoard, row: row + 1, column: column, autoClick }, checkedPoints, shouldPassThroughCallback);
         newBoard = expandOutFromBlock({ board: newBoard, row: row - 1, column: column, autoClick }, checkedPoints, shouldPassThroughCallback);
         newBoard = expandOutFromBlock({ board: newBoard, row: row, column: column + 1, autoClick }, checkedPoints, shouldPassThroughCallback);
-        newBoard = expandOutFromBlock({ board: newBoard, row: row, column: column - 1, autoClick }, checkedPoints);
+        newBoard = expandOutFromBlock({ board: newBoard, row: row, column: column - 1, autoClick }, checkedPoints, shouldPassThroughCallback);
         // diagonals
         newBoard = expandOutFromBlock({ board: newBoard, row: row - 1, column: column - 1, autoClick }, checkedPoints, shouldPassThroughCallback);
         newBoard = expandOutFromBlock({ board: newBoard, row: row - 1, column: column + 1, autoClick }, checkedPoints, shouldPassThroughCallback);

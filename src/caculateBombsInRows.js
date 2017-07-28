@@ -120,7 +120,7 @@ export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
             passThrough: true,
         };
     });
-    
+
     // fill in missing bombs based on emptyCellMap
     if (bombCount !== bombs) {
         const emptyCellMap = Object.keys(emptyCells).map((cell) => {
@@ -132,7 +132,7 @@ export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
                 box: board[r][c],
             };
         });
-        
+
         for (let i = 0; i < emptyCellMap.length && bombCount <= bombs; ++i) {
             const { rowIndex, boxIndex, box } = emptyCellMap[i];
     
