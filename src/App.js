@@ -95,7 +95,7 @@ class Board extends Component {
                 // you clicked on an empty space, need to expand out
                 const checkedPoints = {};
                 board = calculateEmptySpacesOnBoard({ board: this.state.board, row, column }, checkedPoints, doubleClicked);
-                
+
                 if (doubleClicked) {
                     // check if anything from double click was a bomb
                     const hasBomb = Object.keys(checkedPoints).reduce((isBomb, key) => {

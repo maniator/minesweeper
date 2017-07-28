@@ -22,10 +22,13 @@ export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
     let bombsInARow = 0;
     const emptyCells = {};
     const increaseCellValue = ({ row, column }, board) => {
-        board[row][column].value += 1;
+        const point = board[row][column];
+        point.value += 1;
 
         if (board[row][column].value >= 4) {
             delete emptyCells[`${row}|${column}`];
+        } else if (!point.containsBomb) {
+            emptyCells[`${row}|${column}`] = true;
         }
     };
     
@@ -75,8 +78,6 @@ export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
     for (let r = 0; r < rows; ++r) {
         const rowArray = [];
         for (let c = 0; c < columns; ++c) {
-            emptyCells[`${r}|${c}`] = true;
-
             rowArray.push({
                 clicked: false,
                 flagged: false,
