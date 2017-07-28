@@ -90,6 +90,7 @@ export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
 
     const noBombRow = noBomb.row || 0;
     const noBombColumn = noBomb.column || 0;
+    let hasNotPassedThroughYet = true;
 
     // seed the board starting either from the noBomb cell or from the top corner
     board = expandOutFromBlock({ board, row: noBombRow, column: noBombColumn }, {}, ({ point, row, column, boardCopy }) => {
@@ -115,9 +116,13 @@ export const calculateBombsInRows = ({ rows, columns, bombs, noBomb = {} }) => {
             board: boardCopy,
         });
 
+        const passThrough = hasNotPassedThroughYet || Math.random() > 0.1;
+
+        hasNotPassedThroughYet = false;
+
         return {
             newBoard,
-            passThrough: true,
+            passThrough: passThrough,
         };
     });
 
