@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import style from 'styled-components';
 
 const BlockStyled = style.div`
-    width: 1rem;
-    height: 1rem;
+    min-width: 1rem;
+    min-height: 1rem;
     padding: 1rem;
     border: 1px solid grey;
     display: inline-block;
