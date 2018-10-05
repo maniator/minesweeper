@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import style from 'styled-components';
+import React, { Component } from "react";
+import style from "styled-components";
 
 const BlockStyled = style.div`
     width: 1rem;
@@ -9,65 +9,72 @@ const BlockStyled = style.div`
     display: inline-block;
     white-space: nowrap;
     background-color: ${({ clicked, flagged, containsBomb }) => {
-    if (clicked) {
+      if (clicked) {
         if (containsBomb) {
-            return 'red';
+          return "red";
         } else {
-            return 'white';
+          return "white";
         }
-    } else if (flagged) {
-        return 'purple';
-    } else {
-        return 'black';
-    }
-}};
-    
+      } else if (flagged) {
+        return "purple";
+      } else {
+        return "black";
+      }
+    }};
+
     &:hover {
-        cursor: ${({ clicked }) => clicked ? 'not-allowed' : 'pointer' };
+        cursor: ${({ clicked }) => (clicked ? "not-allowed" : "pointer")};
     }
 `;
 
 export class Block extends Component {
-    constructor ({data}) {
-        super();
+  constructor({ data }) {
+    super();
 
-        this.state = data;
+    this.state = data;
+  }
+
+  render() {
+    const {
+      data: { value }
+    } = this.props;
+    const clickedLetter = this.state.containsBomb
+      ? "B"
+      : value > 0
+        ? value
+        : "";
+
+    return (
+      <BlockStyled
+        onClick={e => this.handleClick(e)}
+        onContextMenu={e => this.handleContextMenu(e)}
+        {...this.state}
+      >
+        {this.state.clicked && clickedLetter}
+        {this.state.flagged ? "F" : ""}
+      </BlockStyled>
+    );
+  }
+
+  handleContextMenu(e) {
+    e.preventDefault();
+    if (!this.state.clicked) {
+      this.setState({
+        flagged: !this.state.flagged
+      });
     }
+  }
 
-    render () {
-        const { data: { value } } = this.props;
-        const clickedLetter = this.state.containsBomb ? 'B' : (value > 0 ? value : '');
-
-        return <BlockStyled
-            onClick={(e) => this.handleClick(e)}
-            onContextMenu={(e) => this.handleContextMenu(e)}
-            {...this.state}
-        >
-            {this.state.clicked ? clickedLetter : ''}
-            {this.state.flagged ? 'F' : ''}
-        </BlockStyled>
+  handleClick(e) {
+    if (!this.state.clicked && !this.state.flagged) {
+      this.props.onBoxClick({
+        row: this.props.rowIndex,
+        column: this.props.index,
+        currentBox: this.props
+      });
+      this.setState({
+        clicked: true
+      });
     }
-
-    handleContextMenu (e) {
-        e.preventDefault();
-        if (!this.state.clicked) {
-            this.setState({
-                flagged: !this.state.flagged,
-            });
-        }
-
-    }
-
-    handleClick (e) {
-        if (!this.state.clicked && !this.state.flagged) {
-            this.props.onBoxClick({
-                row: this.props.rowIndex,
-                column: this.props.index,
-                currentBox: this.props,
-            });
-            this.setState({
-                clicked: true,
-            });
-        }
-    }
+  }
 }
